@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
-%w( rubygems sinatra uri net/http ).each { |g| require g }
+%w( rubygems sinatra uri net/http  ).each { |g| require g }
+include ERB::Util
 
 layout { File.read('views/layout.erb') }
 
@@ -19,7 +20,7 @@ get '/q' do
 
   actual_domain = params[:domain]
   actual_domain = "http://#{@domain}" unless @domain =~ /^http:\/\//
-  @actual_domain = actual_domain
+  @actual_domain = h(actual_domain)
 
   uri = valid_uri(actual_domain)
   
