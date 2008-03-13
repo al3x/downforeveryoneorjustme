@@ -1,0 +1,76 @@
+#!/usr/bin/env ruby
+
+%w( rubygems sinatra uri net/http ).each { |g| require g }
+
+layout { File.read('views/layout.erb') }
+
+def show(template, title="Down for everyone or just me?")
+  @title = title
+  erb(template)
+end
+
+get '/' do
+  show :home
+end
+
+get '/q' do
+  user_domain = params[:domain]
+  @domain = user_domain
+
+  actual_domain = params[:domain]
+  actual_domain = "http://#{@domain}" unless @domain =~ /^http:\/\//
+  @actual_domain = actual_domain
+
+  uri = valid_uri(actual_domain)
+  
+  if uri == :invalid
+    redirect '/huh'
+  elsif is_up?(uri)
+    show(:up, "It's just you.")
+  else
+    show(:down, "Panic!")
+  end
+end
+
+get '/huh' do
+  show(:huh, "Huh?")
+end
+
+private
+
+  def valid_uri(domain)
+    uri = nil
+    code = nil
+    
+    begin 
+      uri = URI.parse(domain)
+    rescue Exception
+      return :invalid
+    else
+      return :invalid unless uri.class == URI::HTTP
+      uri
+    end
+  end
+  
+  def is_up?(uri)  
+    puts "URI: #{uri.host}:#{uri.port} - #{uri}"
+    code = nil
+      
+    begin
+      Net::HTTP.start(uri.host, uri.port) do |http|
+        code = http.request_head("/").code
+      end
+      puts "Code: #{code}"
+      
+    rescue Exception => e
+      puts "Exception: #{e.message}"
+      return
+    else
+      if code =~ /(200|301|302)/
+        return true
+      else
+        return false
+      end
+    end
+        
+  end
