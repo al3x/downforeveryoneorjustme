@@ -15,6 +15,15 @@ get '/' do
 end
 
 get '/q' do
+  if params[:domain] =~ /downforeveryoneorjustme/
+    @domain = h(params[:domain])
+    show(:up, "It's just you.")
+  else
+    redirect "/#{params[:domain]}"
+  end
+end
+
+get '/:domain' do
   actual_domain = params[:domain]
   actual_domain = "http://#{actual_domain}" unless actual_domain =~ /^http:\/\//
   actual_domain = "#{actual_domain}.com" unless actual_domain =~ /\.\w+/

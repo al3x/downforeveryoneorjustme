@@ -1,0 +1,16 @@
+h1. Down for everyone or just me?
+
+Reports if a HEAD request is possible to the given domain.
+
+h2. Requirements
+
+* Ruby 1.8.5+
+* Ruby gems: Sinatra
+
+h2. TODO
+
+* subdomain wildcarding
+
+h2. Done
+
+* cleaner query URLs, ex: http://downforeveryoneorjustme.com/yahoo.com
