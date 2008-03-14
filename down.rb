@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-%w( rubygems sinatra uri net/http erb ).each { |g| require g }
+%w( rubygems sinatra uri net/http erb timeout ).each { |g| require g }
 include ERB::Util
 
 layout { File.read('views/layout.erb') }
@@ -83,9 +83,14 @@ private
     code = nil
       
     begin
-      Net::HTTP.start(uri.host, uri.port) do |http|
-        code = http.request_head("/").code
-      end      
+      Timeout::timeout(4) {
+        Net::HTTP.start(uri.host, uri.port) do |http|
+          http.read_timeout = 3
+          code = http.request_head("/").code
+        end
+      }
+    rescue Timeout::Error
+      return false
     rescue Exception => e
       return false
     else
