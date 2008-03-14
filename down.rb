@@ -15,15 +15,14 @@ get '/' do
 end
 
 get '/q' do
-  user_domain = params[:domain]
-  @domain = user_domain
-
   actual_domain = params[:domain]
-  actual_domain = "http://#{@domain}" unless @domain =~ /^http:\/\//
-  actual_domain = "#{@domain}.com" unless @domain =~ /\.\w+/
-  @actual_domain = h(actual_domain)
+  actual_domain = "http://#{actual_domain}" unless actual_domain =~ /^http:\/\//
+  actual_domain = "#{actual_domain}.com" unless actual_domain =~ /\.\w+/
 
   uri = valid_uri(actual_domain)
+  
+  @domain = h(params[:domain])
+  @actual_domain = h(actual_domain)
   
   if uri == :invalid
     redirect '/huh'
