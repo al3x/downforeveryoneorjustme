@@ -20,6 +20,7 @@ get '/q' do
 
   actual_domain = params[:domain]
   actual_domain = "http://#{@domain}" unless @domain =~ /^http:\/\//
+  actual_domain = "#{@domain}.com" unless @domain =~ /\.\w+/
   @actual_domain = h(actual_domain)
 
   uri = valid_uri(actual_domain)
@@ -55,7 +56,6 @@ private
   end
   
   def is_up?(uri)  
-    puts "URI: #{uri.host}:#{uri.port} - #{uri}"
     code = nil
       
     begin
