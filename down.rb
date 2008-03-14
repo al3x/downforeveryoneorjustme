@@ -7,7 +7,7 @@ layout { File.read('views/layout.erb') }
 
 def show(template, title="Down for everyone or just me?")
   @title = title
-  erb(template)
+  erb template
 end
 
 get '/' do
@@ -20,7 +20,7 @@ get '/q' do
     show(:up, "It's just you.")
   else
     domain = params[:domain]
-    domain.gsub!("/http://", "")
+    domain.gsub!('/http://', '')
     redirect "/#{domain}"
   end
 end
@@ -28,7 +28,7 @@ end
 ['/:domain', '/:domain/', '/:www.:domain', '/:www.:domain/', '/:www.:domain.:ext', '/:www.:domain.:ext/'].each do |route|
   get route do
     actual_domain = params[:domain]
-    actual_domain.gsub!("/http://", "")
+    actual_domain.gsub!('/http://', '')
     
     actual_domain = "#{params[:www]}.#{actual_domain}" if params[:www]          
     actual_domain = "#{actual_domain}.#{params[:ext]}" if params[:ext]
@@ -40,26 +40,23 @@ end
     end
     
     before_http = actual_domain
-    actual_domain = "http://#{actual_domain}" unless actual_domain =~ /^http:\/\//
-
-    uri = valid_uri(actual_domain)
-  
     @domain = h(before_http)
+    
+    actual_domain = "http://#{actual_domain}" unless actual_domain =~ /^http:\/\//
+    uri = valid_uri(actual_domain)
   
     if uri == :invalid
       show(:huh, "Huh?")
     elsif is_up?(uri)
       show(:up, "It's just you.")
     else
-      show(:down, "Panic!")
+      show(:down, "It's not just you!")
     end
   end
 end
 
 [404, 500].each do |route|
-  get route do
-    show(:huh, "Huh?")
-  end
+  get route { show(:huh, "Huh?") }
 end
 
 private

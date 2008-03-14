@@ -1,6 +1,6 @@
 h1. Down for everyone or just me?
 
-Reports if a HEAD request is possible to the given domain.
+Reports if a HEAD request is possible to a given domain.
 
 h2. Requirements
 
@@ -10,7 +10,13 @@ h2. Requirements
 h2. TODO
 
 * subdomain wildcarding
+* log analysis, ex: what domains get queried the most?
+* proper deployment (Vlad?  Cap?)
+* Thin
+* process monitoring
+* testing
 
 h2. Done
 
+* better "down language"
 * cleaner query URLs, ex: http://downforeveryoneorjustme.com/yahoo.com
