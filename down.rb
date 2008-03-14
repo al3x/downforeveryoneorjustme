@@ -49,8 +49,9 @@ private
       return :invalid
     else
       return :invalid unless uri.class == URI::HTTP
-      uri
     end
+    
+    uri
   end
   
   def is_up?(uri)  
@@ -60,12 +61,9 @@ private
     begin
       Net::HTTP.start(uri.host, uri.port) do |http|
         code = http.request_head("/").code
-      end
-      puts "Code: #{code}"
-      
+      end      
     rescue Exception => e
-      puts "Exception: #{e.message}"
-      return
+      return false
     else
       if code =~ /(200|301|302)/
         return true
@@ -73,5 +71,6 @@ private
         return false
       end
     end
-        
+    
+    false  
   end
