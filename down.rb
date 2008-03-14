@@ -19,13 +19,17 @@ get '/q' do
     @domain = h(params[:domain])
     show(:up, "It's just you.")
   else
-    redirect "/#{params[:domain]}"
+    domain = params[:domain]
+    domain.gsub!("/http://", "")
+    redirect "/#{domain}"
   end
 end
 
 ['/:domain', '/:www.:domain', '/:www.:domain.:ext'].each do |route|
   get route do
     actual_domain = params[:domain]
+    actual_domain.gsub!("/http://", "")
+    
     actual_domain = "#{params[:www]}.#{actual_domain}" if params[:www]          
     actual_domain = "#{actual_domain}.#{params[:ext]}" if params[:ext]
     
