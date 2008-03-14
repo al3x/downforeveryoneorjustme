@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-%w( rubygems sinatra uri net/http  ).each { |g| require g }
+%w( rubygems sinatra uri net/http erb ).each { |g| require g }
 include ERB::Util
 
 layout { File.read('views/layout.erb') }
