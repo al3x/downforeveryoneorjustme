@@ -25,7 +25,7 @@ get '/q' do
   end
 end
 
-['/:domain', '/:www.:domain', '/:www.:domain.:ext'].each do |route|
+['/:domain', '/:domain/', '/:www.:domain', '/:www.:domain/', '/:www.:domain.:ext', '/:www.:domain.:ext/'].each do |route|
   get route do
     actual_domain = params[:domain]
     actual_domain.gsub!("/http://", "")
@@ -53,6 +53,12 @@ end
     else
       show(:down, "Panic!")
     end
+  end
+end
+
+[404, 500].each do |route|
+  get route do
+    show(:huh, "Huh?")
   end
 end
 
