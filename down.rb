@@ -23,27 +23,25 @@ get '/q' do
   end
 end
 
-get '/:domain' do
-  actual_domain = params[:domain]
-  actual_domain = "http://#{actual_domain}" unless actual_domain =~ /^http:\/\//
-  actual_domain = "#{actual_domain}.com" unless actual_domain =~ /\.\w+/
+['/:domain', '/www.:domain', '/www.:domain.:ext'].each do |route|
+  get route do
+    actual_domain = params[:domain]
+    actual_domain = "http://#{actual_domain}" unless actual_domain =~ /^http:\/\//
+    actual_domain = "#{actual_domain}.com" unless actual_domain =~ /\.\w+/
 
-  uri = valid_uri(actual_domain)
+    uri = valid_uri(actual_domain)
   
-  @domain = h(params[:domain])
-  @actual_domain = h(actual_domain)
+    @domain = h(params[:domain])
+    @actual_domain = h(actual_domain)
   
-  if uri == :invalid
-    redirect '/huh'
-  elsif is_up?(uri)
-    show(:up, "It's just you.")
-  else
-    show(:down, "Panic!")
+    if uri == :invalid
+      show(:huh, "Huh?")
+    elsif is_up?(uri)
+      show(:up, "It's just you.")
+    else
+      show(:down, "Panic!")
+    end
   end
-end
-
-get '/huh' do
-  show(:huh, "Huh?")
 end
 
 private
