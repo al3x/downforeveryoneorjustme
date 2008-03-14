@@ -33,7 +33,7 @@ end
     actual_domain = "#{params[:www]}.#{actual_domain}" if params[:www]          
     actual_domain = "#{actual_domain}.#{params[:ext]}" if params[:ext]
     
-    if params[:format] != 'html'
+    if params[:format] != 'html' && params[:format] != nil
       actual_domain = "#{actual_domain}.#{params[:format]}"
     else
       actual_domain = "#{actual_domain}.com" unless actual_domain =~ /\.\w+/
