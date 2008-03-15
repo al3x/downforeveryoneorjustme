@@ -38,10 +38,12 @@
       #domain_input { width: 250px; }
     </style>
     <script type="text/javascript">
-      function clearDomainInput() {
-        document.getElementById('domain_input').value = "";
-        document.getElementById('domain_input').style.color = "#000";
-      }
+    function clearDomainInput(e) {
+      if (e.cleared) { return; }
+      e.cleared = true;
+      e.value = '';
+      e.style.color = '#000';
+    }
     </script>
   </head>
   <body>
