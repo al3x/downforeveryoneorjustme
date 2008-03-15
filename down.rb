@@ -17,7 +17,7 @@ end
 get '/q' do
   if params[:domain] =~ /downforeveryoneorjustme/
     @domain = h(params[:domain])
-    show(:up, "It's just you.")
+    show(:hurr, "Well, yes.")
   else
     domain = params[:domain]
     domain.gsub!('/http://', '')
@@ -56,7 +56,9 @@ end
 end
 
 [404, 500].each do |route|
-  get route { show(:huh, "Huh?") }
+  get route do 
+    show(:huh, "Huh?")
+  end
 end
 
 private
