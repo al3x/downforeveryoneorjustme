@@ -15,20 +15,14 @@ get '/' do
 end
 
 get '/q' do
-  if params[:domain] =~ /downforeveryoneorjustme/
-    @domain = h(params[:domain])
-    show(:hurr, "Well, yes.")
-  else
-    domain = params[:domain]
-    domain.gsub!('/http://', '')
-    redirect "/#{domain}"
-  end
+  domain = params[:domain]
+  domain.gsub!('/http://', '')
+  redirect "/#{domain}"
 end
 
 ['/:domain', '/:domain/', '/:www.:domain', '/:www.:domain/', '/:www.:domain.:ext', '/:www.:domain.:ext/'].each do |route|
   get route do
     actual_domain = params[:domain]
-    actual_domain.gsub!('/http://', '')
     
     actual_domain = "#{params[:www]}.#{actual_domain}" if params[:www]          
     actual_domain = "#{actual_domain}.#{params[:ext]}" if params[:ext]
@@ -44,8 +38,10 @@ end
     
     actual_domain = "http://#{actual_domain}" unless actual_domain =~ /^http:\/\//
     uri = valid_uri(actual_domain)
-  
-    if uri == :invalid
+    
+    if actual_domain =~ /downforeveryoneorjustme\.com/
+      show(:hurr, "Well, yes.")
+    elsif uri == :invalid
       show(:huh, "Huh?")
     elsif is_up?(uri)
       show(:up, "It's just you.")
