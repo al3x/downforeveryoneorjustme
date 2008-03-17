@@ -85,7 +85,7 @@ private
       Timeout::timeout(4) {
         Net::HTTP.start(uri.host, uri.port) do |http|
           http.read_timeout = 3
-          code = http.request_head("/").code
+          code = http.request_head('/', { 'User-Agent' => 'downforeveryoneorjustme.com' }).code
         end
       }
     rescue Timeout::Error
