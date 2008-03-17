@@ -8,6 +8,5 @@ Sinatra::Application.default_options.merge!(
   :env => :production 
 )
 
-require 'down' 
-
+require 'down'
 run Sinatra.application

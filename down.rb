@@ -3,8 +3,6 @@
 %w( rubygems sinatra uri net/http erb timeout ).each { |g| require g }
 include ERB::Util
 
-layout { File.read('views/layout.erb') }
-
 def show(template, title="Down for everyone or just me?")
   @title = title
   erb template
