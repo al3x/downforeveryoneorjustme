@@ -4,7 +4,7 @@ environment: development
 address: 127.0.0.1 
 #user: nobody
 #group: nobody
-port: 4567
+#port: 4567
 pid: /tmp/thin.pid 
 rackup: config.ru 
 log: /tmp/thin.log 
@@ -12,3 +12,4 @@ max_conns: 1024
 timeout: 30 
 max_persistent_conns: 512 
 daemonize: false
+socket: /tmp/thin.sock

@@ -59,7 +59,6 @@ private
 
   def valid_uri(domain)
     uri = nil
-    code = nil
     
     begin 
       uri = URI.parse(domain)
