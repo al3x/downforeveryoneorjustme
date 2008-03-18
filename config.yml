@@ -2,9 +2,6 @@
 environment: production
 chdir: /var/www/downforeveryoneorjustme.com
 address: 127.0.0.1 
-#user: nobody
-#group: nobody
-#port: 8000
 pid: /tmp/thin.pid 
 rackup: /var/www/downforeveryoneorjustme.com/config.ru 
 log: /tmp/thin.log 
