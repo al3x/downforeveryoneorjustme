@@ -1,4 +1,4 @@
-$:.unshift '../sinatra/lib' 
+$:.unshift 'sinatra/lib' 
 $:.unshift '.' 
 
 require 'sinatra' 

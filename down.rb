@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 %w( rubygems sinatra uri net/http erb timeout ).each { |g| require g }
+
 include ERB::Util
 
 def show(template, title="Down for everyone or just me?")
