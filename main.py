@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import web, cgi, re 
+import cgi, re 
 from google.appengine.api import urlfetch
 
 urls = (
