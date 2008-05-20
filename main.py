@@ -9,7 +9,7 @@ import wsgiref.handlers
 import logging
 
 HTTPRE = re.compile('http:\/\/')
-DOWNRE = re.compile('downforeveryoneorjustme\.com')
+DOWNRE = re.compile('downforeveryoneorjustme')
 
 def clean_url(domain):
     domain = cgi.escape(domain)
@@ -34,7 +34,7 @@ class CheckDomain(BetterHandler):
         original_domain = domain
         domain = clean_url(domain)
         
-        if DOWNRE.match(domain):
+        if DOWNRE.search(domain) is not None:
             for_template = {
                 'title': "It's just you.",
             }
@@ -64,7 +64,7 @@ class CheckDomain(BetterHandler):
                 return self.response.out.write(template.render(self.template_path('up.html'), for_template))
             else:
                 for_template = {
-                    'title': "It's just you.",
+                    'title': "It's not just you!",
                     'domain': domain,
                     'original_domain': original_domain,
                 }
