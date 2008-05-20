@@ -6,6 +6,7 @@ from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 from google.appengine.api import urlfetch
 import wsgiref.handlers
+import logging
 
 HTTPRE = re.compile('http:\/\/')
 DOWNRE = re.compile('downforeveryoneorjustme\.com')
@@ -14,60 +15,60 @@ def clean_url(domain):
     domain = cgi.escape(domain)
     domain.encode("utf-8")    
     
-    if HTTPRE.match(domain):
+    if HTTPRE.match(domain) == None:
         domain = 'http://' + domain
     
     return domain
     
-def render_errorpage():
-    for_template = {
-        'title': 'Huh?',
-    }
     
-    self.response.out.write(template.render(self.template_path('error.html'), for_template))
-
 class FrontPage(BetterHandler):
     def get(self):        
         for_template = {
             'title': 'Down for everyone or just me?',
         }
-        
-        self.response.out.write(template.render(self.template_path('index.html'), for_template))
+        return self.response.out.write(template.render(self.template_path('index.html'), for_template))
 
 
 class CheckDomain(BetterHandler):
-    def get(self, domain):  
+    def get(self, domain):
+        original_domain = domain
         domain = clean_url(domain)
         
         if DOWNRE.match(domain):
             for_template = {
                 'title': "It's just you.",
             }
-            
-            self.response.out.write(template.render(self.template_path('hurr.html'), for_template))
+            return self.response.out.write(template.render(self.template_path('hurr.html'), for_template))
         
         try:
-            response = urlfetch.fetch(domain, method='HEAD')
+            response = urlfetch.fetch(domain, method=urlfetch.HEAD)
         except urlfetch.Error:
-            render_errorpage()
+            for_template = {
+                'title': 'Huh?'
+            }
+            logging.debug("urlfetch.Error for domain '%s'", domain)
+            return self.response.out.write(template.render(self.template_path('error.html'), for_template))        
         except urlfetch.InvalidURLError:
-            render_errorpage()
-        else:
-            status = response.status_code
-              
-        if (status == 200) or (status == 301) or (status == 302):
             for_template = {
-                'title': "It's just you.",
-                'domain': domain,
+                'title': 'Huh?'
             }
-            
-            self.response.out.write(template.render(self.template_path('up.html'), for_template))
+            logging.debug("urlfetch.InvalidURLError for domain '%s'", domain)
+            return self.response.out.write(template.render(self.template_path('error.html'), for_template))
         else:
-            for_template = {
-                'title': "It's just you.",
-            }
-            
-            self.response.out.write(template.render(self.template_path('down.html'), for_template))
+            if (response.status_code == 200) or (response.status_code == 301) or (response.status_code == 302):
+                for_template = {
+                    'title': "It's just you.",
+                    'domain': domain,
+                    'original_domain': original_domain,
+                }
+                return self.response.out.write(template.render(self.template_path('up.html'), for_template))
+            else:
+                for_template = {
+                    'title': "It's just you.",
+                    'domain': domain,
+                    'original_domain': original_domain,
+                }
+                return self.response.out.write(template.render(self.template_path('down.html'), for_template))
             
         
 def main():
