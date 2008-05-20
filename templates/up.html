@@ -1,5 +1,6 @@
-$def with (domain)
-It's just you.  <a href="http://$domain" class="domain">$domain</a></span> is up.
+{% extends "layout.html" %}
+{% block content %}
+It's just you.  <a href="http://{{ domain }}" class="domain">{{ domain }}</a></span> is up.
 <p><a href="/">Check another site?</a></p>
 <script type="text/javascript">
 <!--
@@ -11,3 +12,4 @@ google_ad_height = 60;
 //-->
 </script>
 <script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+{% endblock %}

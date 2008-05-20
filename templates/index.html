@@ -1,3 +1,5 @@
+{% extends "layout.html" %}
+{% block content %}
 <form method="get" name="downform" action="/q" onsubmit="return formSubmit()">
   Is 
   <input type="text" name="domain" id="domain_input" value="google.com" onclick="clearDomainInput(this);" /> 
@@ -5,3 +7,4 @@
   <a href="#" onclick="formSubmit();">or just me?</a>
   <input type="submit" style="display: none;" />
 </form>
+{% endblock %}
