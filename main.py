@@ -13,7 +13,7 @@ render = web.template.render('templates/')
 HTTPRE = re.compile('http:\/\/')
 DOWNRE = re.compile('downforeveryoneorjustme\.com')
 
-def cleanurl(domain):
+def clean_url(domain):
     domain = cgi.escape(domain)
     domain.encode("utf-8")    
     
@@ -21,6 +21,11 @@ def cleanurl(domain):
         domain = 'http://' + domain
     
     return domain
+    
+def render_errorpage():
+    title = "Huh?"
+    output = render.error()
+    return render.layout(output, title)
 
 class index:
     def GET(self):
@@ -30,7 +35,7 @@ class index:
 
 class check:
     def GET(self, domain):  
-        domain = cleanurl(domain)
+        domain = clean_url(domain)
         
         if DOWNRE.match(domain):
             title = "It's just you."
@@ -39,10 +44,10 @@ class check:
         
         try:
             response = urlfetch.fetch(domain, method='HEAD')
-        except:
-            title = "Huh?"
-            output = render.error()
-            return render.layout(output, title)
+        except urlfetch.Error:
+            render_errorpage()
+        except urlfetch.InvalidURLError:
+            render_errorpage()
         else:
             status = response.status_code
               
