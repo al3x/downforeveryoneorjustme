@@ -1,0 +1,3 @@
+Fix failure cases:
+  http://downforeveryoneorjustme.com/mail.google.com - "looks down from here"
+  http://downforeveryoneorjustme.com/cse.ohio-state.edu - "doesn't look like a site on the interwho"
