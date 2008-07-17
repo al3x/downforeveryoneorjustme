@@ -54,6 +54,13 @@ class CheckDomain(BetterHandler):
             }
             logging.debug("urlfetch.InvalidURLError for domain '%s'", domain)
             return self.response.out.write(template.render(self.template_path('error.html'), for_template))
+        except DeadlineExceededError:
+            for_template = {
+                'title': "It's not just you!",
+                'domain': domain,
+                'original_domain': original_domain,
+            }
+            return self.response.out.write(template.render(self.template_path('down.html'), for_template))
         else:
             if (response.status_code == 200) or (response.status_code == 301) or (response.status_code == 302):
                 for_template = {
