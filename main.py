@@ -1,90 +1,122 @@
 #!/usr/bin/env python
 
-import cgi, re 
+import cgi, re
 from betterhandler import *
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 from google.appengine.api import urlfetch
+from google.appengine.api import memcache
 import wsgiref.handlers
 import logging
 
 HTTPRE = re.compile('http:\/\/')
 DOWNRE = re.compile('downforeveryoneorjustme')
 
-def clean_url(domain):
+def valid_response_code(code):
+  if (code == 200) or (code == 301) or (code == 302):
+    return True
+  else:
+    return False
+  
+class Url:
+  def __init__(self, domain):
+    self.original_domain = domain
+    self.domain = self.clean_url(domain)
+    
+  def clean_url(self, domain):
     domain = cgi.escape(domain)
-    domain.encode("utf-8")    
-    
+    domain.encode("utf-8")
+
     if HTTPRE.match(domain) == None:
-        domain = 'http://' + domain
-    
+      domain = 'http://' + domain
+
     return domain
     
+  def dos(self):
+    doscheck = memcache.get(self.domain)
     
-class FrontPage(BetterHandler):
-    def get(self):        
-        for_template = {
-            'title': 'Down for everyone or just me?',
-        }
-        return self.response.out.write(template.render(self.template_path('index.html'), for_template))
+    if doscheck is not None:
+      doscheck = memcache.incr(self.domain)
+    else:
+      doscheck = memcache.add(self.domain, 0, 60)
+      
+      if not doscheck:
+        logging.error("Memcache set failed.")
+        
+      doscheck = 0
+    
+    if doscheck > 500:
+      return True
+    else:
+      return False
+      
+  def isself(self):
+    logging.debug("in isself domain is %s", self.domain)
+    
+    if DOWNRE.search(self.domain) == None:
+      return False
+    else:
+      return True
 
+class FrontPage(BetterHandler):
+  def get(self):
+    for_template = {
+      'title': 'Down for everyone or just me?',
+    }
+    return self.response.out.write(template.render(self.template_path('index.html'), for_template))
 
 class CheckDomain(BetterHandler):
-    def get(self, domain):
-        original_domain = domain
-        domain = clean_url(domain)
-        
-        if DOWNRE.search(domain) is not None:
-            for_template = {
-                'title': "It's just you.",
-            }
-            return self.response.out.write(template.render(self.template_path('hurr.html'), for_template))
-        
-        try:
-            response = urlfetch.fetch(domain, method=urlfetch.HEAD)
-        except urlfetch.Error:
-            for_template = {
-                'title': 'Huh?'
-            }
-            logging.debug("urlfetch.Error for domain '%s'", domain)
-            return self.response.out.write(template.render(self.template_path('error.html'), for_template))        
-        except urlfetch.InvalidURLError:
-            for_template = {
-                'title': 'Huh?'
-            }
-            logging.debug("urlfetch.InvalidURLError for domain '%s'", domain)
-            return self.response.out.write(template.render(self.template_path('error.html'), for_template))
-        except DeadlineExceededError:
-            for_template = {
-                'title': "It's not just you!",
-                'domain': domain,
-                'original_domain': original_domain,
-            }
-            return self.response.out.write(template.render(self.template_path('down.html'), for_template))
+  def render_error(self, url, error='unknown'):
+    for_template = {'title': 'Huh?'}
+    logging.debug("Error on domain '%s': %s", url.domain, error)
+    return self.response.out.write(template.render(self.template_path('error.html'), for_template))
+  
+  def render_down(self, url):
+    for_template = {
+      'title': "It's not just you!",
+      'domain': url.domain,
+      'original_domain': url.original_domain,
+    }
+    return self.response.out.write(template.render(self.template_path('down.html'), for_template))
+  
+  def render_up(self, url):
+    for_template = {
+      'title': "It's just you.",
+      'domain': url.domain,
+      'original_domain': url.original_domain,
+    }
+    return self.response.out.write(template.render(self.template_path('up.html'), for_template))
+  
+  def render_hurr(self):
+    for_template = {'title': "It's just you."}
+    return self.response.out.write(template.render(self.template_path('hurr.html'), for_template))
+  
+  def get(self, domain):
+    u = Url(domain)
+                
+    if u.isself():
+      self.render_hurr()
+    elif u.dos():
+      self.render_error(u, "potential DoS")
+    else:        
+      try:
+        response = urlfetch.fetch(u.domain, method=urlfetch.HEAD)
+      except urlfetch.Error:
+        self.render_error(u, "urlfetch.Error")
+      except urlfetch.InvalidURLError:
+        self.render_error(u, "urlfetch.InvalidURLError")
+      except DeadlineExceededError:
+        self.render_down(u)
+      else:
+        if valid_response_code(response.status_code):
+          self.render_up(u)
         else:
-            if (response.status_code == 200) or (response.status_code == 301) or (response.status_code == 302):
-                for_template = {
-                    'title': "It's just you.",
-                    'domain': domain,
-                    'original_domain': original_domain,
-                }
-                return self.response.out.write(template.render(self.template_path('up.html'), for_template))
-            else:
-                for_template = {
-                    'title': "It's not just you!",
-                    'domain': domain,
-                    'original_domain': original_domain,
-                }
-                return self.response.out.write(template.render(self.template_path('down.html'), for_template))
-            
-        
-def main():
-    application = webapp.WSGIApplication([
-                                            ('/', FrontPage),
-                                            (r'/(.*)', CheckDomain)
-                                         ],
-                                         debug=True)
+          self.render_down(u)
 
+def main():
+    application = webapp.WSGIApplication([('/', FrontPage),
+                                          (r'/(.*)', CheckDomain)],
+                                         debug=True)
     wsgiref.handlers.CGIHandler().run(application)
 
 if __name__ == "__main__":
