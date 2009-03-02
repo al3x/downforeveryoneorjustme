@@ -1,48 +1,18 @@
-import logging
-import unittest
+import logging, unittest
+from main import Url
 
-from google.appengine.ext import db
+class UrlTest(unittest.TestCase):
+  def test_sane_domain(self):
+    url = Url('google.com')
+    self.assertEqual('google.com', url.original_domain)
+    self.assertEqual('http://google.com', url.domain)
+    
+  def test_domain_with_http(self):
+    url = Url('http://google.com')
+    self.assertEqual('http://google.com', url.original_domain)
+    self.assertEqual('http://google.com', url.domain)
 
-#class SuccessFailError(unittest.TestCase):
-#  def setUp(self):
-#      logging.info('In setUp()')
-#      
-#  def tearDown(self):
-#      logging.info('In tearDown()')
-#
-#  def test_success(self):
-#      logging.info('Running test_success()')
-#      self.assertTrue(True)
-#
-#  def test_failure(self):
-#      logging.info('Running test_failure()')
-#      self.assertTrue(False)
-#      
-#  def test_error(self):
-#      logging.info('Running test_error()')
-#      raise Exception('expected exception')
-#
-#
-#class ModelTest(unittest.TestCase):
-#  def setUp(self):
-#    # Populate test entities.
-#    pass
-#
-#  def tearDown(self):
-#    # There is no need to delete test entities.
-#    pass
-#
-#  def test_new_entity(self):
-#    entity = model.MyEntity(name='Foo')
-#    self.assertEqual('Foo', entity.name)
-#
-#  def test_saved_enitity(self):
-#    entity = model.MyEntity(name='Foo')
-#    key = entity.put()
-#    self.assertEqual('Foo', db.get(key).name)
-#
-#  def test_setup_entity(self):
-#    entity = db.get(self.setup_key)
-#    self.assertEqual('Bar', entity.name)
-
-
+  def test_domain_with_http_encoded(self):
+    url = Url('http%3A//google.com')
+    self.assertEqual('google.com', url.original_domain)
+    self.assertEqual('http://google.com', url.domain)

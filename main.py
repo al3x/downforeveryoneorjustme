@@ -1,13 +1,12 @@
 #!/usr/bin/env python
 
-import cgi, re
+import cgi, logging, re, wsgiref.handlers
+
 from betterhandler import *
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 from google.appengine.api import urlfetch
 from google.appengine.api import memcache
-import wsgiref.handlers
-import logging
 
 HTTPRE = re.compile('http:\/\/')
 DOWNRE = re.compile('downforeveryoneorjustme')
@@ -20,8 +19,12 @@ def valid_response_code(code):
   
 class Url:
   def __init__(self, domain):
+    if domain.find("http%3A//") is not -1:
+      domain = domain.split("http%3A//")[1]
+    
     self.original_domain = domain
     self.domain = self.clean_url(domain)
+    logging.debug("new Url: <original_domain: %s> <domain: %s>", self.original_domain, self.domain)
     
   def clean_url(self, domain):
     domain = cgi.escape(domain)
@@ -67,8 +70,8 @@ class FrontPage(BetterHandler):
 
 class CheckDomain(BetterHandler):
   def render_error(self, url, error='unknown'):
-    for_template = {'title': 'Huh?'}
-    logging.debug("Error on domain '%s': %s", url.domain, error)
+    for_template = {'title': 'Huh?', 'domain': url.original_domain}
+    logging.error("Error on domain '%s': %s", url.domain, error)
     return self.response.out.write(template.render(self.template_path('error.html'), for_template))
   
   def render_down(self, url):
@@ -102,7 +105,7 @@ class CheckDomain(BetterHandler):
       try:
         response = urlfetch.fetch(u.domain, method=urlfetch.HEAD)
       except urlfetch.Error:
-        self.render_error(u, "urlfetch.Error")
+        self.render_down(u)
       except urlfetch.InvalidURLError:
         self.render_error(u, "urlfetch.InvalidURLError")
       except DeadlineExceededError:
