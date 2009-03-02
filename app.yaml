@@ -17,5 +17,8 @@ handlers:
 - url: /javascripts
   static_dir: javascripts
 
+- url: /test.*
+  script: gaeunit.py
+
 - url: .*
   script: main.py

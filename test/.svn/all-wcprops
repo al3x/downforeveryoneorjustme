@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/!svn/ver/56/tags/release-1.2.5/sample_app/test
+END
+web_tests.py
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/!svn/ver/56/tags/release-1.2.5/sample_app/test/web_tests.py
+END
+unit_tests.py
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/!svn/ver/56/tags/release-1.2.5/sample_app/test/unit_tests.py
+END
+appengine_api_tests.py
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/!svn/ver/56/tags/release-1.2.5/sample_app/test/appengine_api_tests.py
+END
