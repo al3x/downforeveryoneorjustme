@@ -1,0 +1,15 @@
+h1. Introduction
+
+This code powers http://downforeveryoneorjustme.com, a "single serving site":http://isthisyourpaperonsingleservingsites.com/ that tells you whether or not a web site appears to be down.
+
+h1. Installation (Or, Why You're Probably Not Installing This)
+
+This code is provided mostly as an example resource for other developers seeking to learn about "Google App Engine":http://code.google.com/appengine/. In the unlikely case that you want to install a clone of my site, complete with advertising and such, feel free to do so I guess. That's pretty weird, dude.
+
+h1. License
+
+See the "LICENSE" file in the source code. Included libraries are licensed under their respective licenses.
+
+h1. Author
+
+"Alex Payne":http://al3x.net/
