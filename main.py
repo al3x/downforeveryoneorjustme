@@ -73,7 +73,6 @@ class CheckDomain(BetterHandler):
     for_template = {
       'title': 'Huh?',
       'domain': url.original_domain,
-      'adno': str(random.randrange(0, 2)),
     }
     logging.error("Error on domain '%s': %s", url.domain, error)
     return self.response.out.write(template.render(self.template_path('error.html'), for_template))
@@ -83,7 +82,6 @@ class CheckDomain(BetterHandler):
       'title': "It's not just you!",
       'domain': url.domain,
       'original_domain': url.original_domain,
-      'adno': str(random.randrange(0, 2)),
     }
     return self.response.out.write(template.render(self.template_path('down.html'), for_template))
   
@@ -92,14 +90,12 @@ class CheckDomain(BetterHandler):
       'title': "It's just you.",
       'domain': url.domain,
       'original_domain': url.original_domain,
-      'adno': str(random.randrange(0, 2)),
     }
     return self.response.out.write(template.render(self.template_path('up.html'), for_template))
   
   def render_hurr(self):
     for_template = {
       'title': "It's just you.",
-      'adno': str(random.randrange(0, 2)),
     }
     return self.response.out.write(template.render(self.template_path('hurr.html'), for_template))
   
