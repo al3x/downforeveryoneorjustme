@@ -20,5 +20,8 @@ handlers:
 - url: /test.*
   script: gaeunit.py
 
+- url: /_tweetcheck
+  script: tweetcheck.py
+
 - url: .*
   script: main.py

@@ -11,6 +11,7 @@
     a:hover{text-decoration:none;}
     input[type=text]{border:1px solid #ccc;color:#ccc;font-size:1em;padding:4px 6px 4px 6px;}
     .domain{font-weight:bold;}
+    a.adlink{color: orange;}
     #container{clear:both;font-size:3em;margin:auto;}
     #domain_input{width:250px;}
     </style>
@@ -22,7 +23,7 @@
       e.style.color = '#000';
     }
     function formSubmit() {
-      domain = document.getElementById('domain_input').value;      
+      domain = document.getElementById('domain_input').value;
       window.location = '/' + domain;
       return false;
     }
@@ -37,6 +38,14 @@
     <noscript>
     <a href="http://www.quantcast.com/p-7a3KxvGn-6BNw" target="_blank"><img src="http://pixel.quantserve.com/pixel/p-7a3KxvGn-6BNw.gif" style="display: none;" border="0" height="1" width="1" alt="Quantcast"/></a>
     </noscript>
+    <script type="text/javascript">
+    var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+    document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+    <script type="text/javascript">
+    var pageTracker = _gat._getTracker("UA-853305-3");
+    pageTracker._trackPageview();
+    </script>
     <script type="text/javascript">
     var cbjspath = "static.chartbeat.com/js/chartbeat.js?uid=714&domain=downforeveryoneorjustme.com";
     var cbjsprotocol = (("https:" == document.location.protocol) ? "https://s3.amazonaws.com/" : "http://");
