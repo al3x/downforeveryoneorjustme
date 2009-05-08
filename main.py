@@ -10,8 +10,14 @@ from google.appengine.ext.webapp import template
 from google.appengine.api import urlfetch
 from google.appengine.api import memcache
 
+try:
+  from google.appengine.runtime import DeadlineExceededError
+except ImportError:
+  from google.appengine.runtime.apiproxy_errors import DeadlineExceededError
+
 HTTPRE = re.compile('http:\/\/')
 DOWNRE = re.compile('downforeveryoneorjustme')
+DOMRE = re.compile("\.\w{2,20}")
 
 def valid_response_code(code):
   if (code == 200) or (code == 301) or (code == 302):
@@ -34,6 +40,13 @@ class Url:
 
     if HTTPRE.match(domain) == None:
       domain = 'http://' + domain
+
+    pieces = domain.split("/")
+
+    while (len(pieces) > 3):
+      pieces.pop()
+
+    domain = "/".join(pieces)
 
     return domain
 
@@ -63,6 +76,12 @@ class Url:
     else:
       return True
 
+  def missingdomain(self):
+    if DOMRE.search(self.domain) == None:
+      return True
+    else:
+      return False
+
 class FrontPage(BetterHandler):
   def get(self):
     for_template = {
@@ -74,7 +93,7 @@ class CheckDomain(BetterHandler):
   def render_error(self, url, error='unknown'):
     for_template = {
       'title': 'Huh?',
-      'domain': url.original_domain,
+      'domain': url.domain,
     }
     logging.error("Error on domain '%s': %s", url.domain, error)
     return self.response.out.write(template.render(self.template_path('error.html'), for_template))
@@ -86,7 +105,6 @@ class CheckDomain(BetterHandler):
     for_template = {
       'title': "It's not just you!",
       'domain': url.domain,
-      'original_domain': url.original_domain,
     }
     return self.response.out.write(template.render(self.template_path('down.html'), for_template))
 
@@ -94,7 +112,6 @@ class CheckDomain(BetterHandler):
     for_template = {
       'title': "It's just you.",
       'domain': url.domain,
-      'original_domain': url.original_domain,
     }
     return self.response.out.write(template.render(self.template_path('up.html'), for_template))
 
@@ -107,7 +124,9 @@ class CheckDomain(BetterHandler):
   def get(self, domain):
     u = Url(domain)
 
-    if u.isself():
+    if u.missingdomain():
+      self.render_error(u, "no domain suffix")
+    elif u.isself():
       self.render_hurr()
     elif u.dos():
       self.render_error(u, "potential DoS")
