@@ -16,8 +16,8 @@ class DownError(Exception):
   pass
 
 def get_top_domain():
-  five_minutes_ago = datetime.now() + timedelta(minutes=-5)
-  query = db.GqlQuery("SELECT * FROM Downer WHERE down_at >= :1", five_minutes_ago)
+  minutes_ago = datetime.now() + timedelta(minutes=-10)
+  query = db.GqlQuery("SELECT * FROM Downer WHERE down_at >= :1", minutes_ago)
   results = query.fetch(1000)
 
   domains = []

@@ -1,4 +1,4 @@
 cron:
 - description: tweet on new top down domains
   url: /_tweetcheck
-  schedule: every 5 minutes
+  schedule: every 10 minutes
