@@ -99,8 +99,8 @@ class CheckDomain(BetterHandler):
     return self.response.out.write(template.render(self.template_path('error.html'), for_template))
 
   def render_down(self, url):
-    downer = Downer(domain=url.domain)
-    db.put(downer)
+    #downer = Downer(domain=url.domain)
+    #db.put(downer)
 
     for_template = {
       'title': "It's not just you!",
@@ -148,7 +148,7 @@ class CheckDomain(BetterHandler):
 def main():
     application = webapp.WSGIApplication([('/', FrontPage),
                                           (r'/(.*)', CheckDomain)],
-                                         debug=True)
+                                         debug=False)
     wsgiref.handlers.CGIHandler().run(application)
 
 if __name__ == "__main__":

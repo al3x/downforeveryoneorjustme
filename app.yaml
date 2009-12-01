@@ -23,5 +23,12 @@ handlers:
 - url: /_tweetcheck
   script: tweetcheck.py
 
+- url: /_downerclear
+  script: downerclear.py
+  
+- url: /remote_api
+  script: $PYTHON_LIB/google/appengine/ext/remote_api/handler.py
+  login: admin
+
 - url: .*
   script: main.py
