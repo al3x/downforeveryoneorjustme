@@ -36,8 +36,8 @@ def get_top_domain():
 
 def tweet(msg):
   url = "https://twitter.com/statuses/update.json"
-  username = "downfor"
-  password = "foobar23"
+  username = "makeuparealusername"
+  password = "pickagoodpassword"
 
   form_fields = { "status": msg }
   payload = urllib.urlencode(form_fields)

@@ -1,6 +1,6 @@
 h1. Introduction
 
-This code powers http://downforeveryoneorjustme.com, a "single serving site":http://isthisyourpaperonsingleservingsites.com/ that tells you whether or not a web site appears to be down.
+This code _used to_ power http://downforeveryoneorjustme.com, a "single serving site":http://isthisyourpaperonsingleservingsites.com/ that tells you whether or not a web site appears to be down. The author no longer owns or operates this domain.
 
 h1. Installation (Or, Why You're Probably Not Installing This)
 
